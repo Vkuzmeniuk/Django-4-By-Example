@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
@@ -21,6 +22,7 @@ class Post(models.Model):
     status = models.CharField(max_length=2,choices=Status.choices,default=Status.DRAFT)
     objects = models.Manager()
     published = PublishedManager()
+    tags = TaggableManager()
     class Meta:
         ordering = ['-publish']
         indexes = [models.Index(fields=['-publish'])]
@@ -32,6 +34,7 @@ class Post(models.Model):
                              self.publish.month,
                              self.publish.day,
                              self.slug])
+    
 
 class Comment(models.Model):
     post = models.ForeignKey(Post,
@@ -50,4 +53,3 @@ class Comment(models.Model):
         ]
     def __str__(self):
         return f'Comment by {self.name} on {self.post}'
-    
